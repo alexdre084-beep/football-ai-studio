@@ -1,0 +1,1 @@
+- [Video generation rollout](video-generation-rollout.md) — sample generation is phase one; real AI rendering is intended for a later phase.

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Football AI Creator"
+description = "A futuristic football video creation studio where fans can describe a story or match moment, choose narration and visual settings, and generate a sample video project."
+version = "1.0.0"
+id = "artifacts/football-ai-creator"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24239
+
+[services.development]
+run = "pnpm --filter @workspace/football-ai-creator run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/football-ai-creator", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/football-ai-creator/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24239"
+BASE_PATH = "/"
