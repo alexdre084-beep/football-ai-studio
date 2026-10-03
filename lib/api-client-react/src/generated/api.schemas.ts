@@ -84,11 +84,37 @@ export interface RenderRequest {
   visualStyle: RenderRequestVisualStyle;
 }
 
+export type RenderSceneVisualSource = typeof RenderSceneVisualSource[keyof typeof RenderSceneVisualSource];
+
+
+export const RenderSceneVisualSource = {
+  pending: 'pending',
+  'local-template': 'local-template',
+  'ai-provider': 'ai-provider',
+} as const;
+
+/**
+ * @nullable
+ */
+export type RenderSceneVisualAssetType = typeof RenderSceneVisualAssetType[keyof typeof RenderSceneVisualAssetType] | null;
+
+
+export const RenderSceneVisualAssetType = {
+  image: 'image',
+  video: 'video',
+} as const;
+
 export interface RenderScene {
   index: number;
   title: string;
   narration: string;
   visualCue: string;
+  visualPrompt: string;
+  visualSource: RenderSceneVisualSource;
+  /** @nullable */
+  visualProvider: string | null;
+  /** @nullable */
+  visualAssetType: RenderSceneVisualAssetType;
   durationSeconds: number;
 }
 

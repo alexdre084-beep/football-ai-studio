@@ -55,6 +55,10 @@ export const CreateRenderJobResponse = zod.object({
   "title": zod.string(),
   "narration": zod.string(),
   "visualCue": zod.string(),
+  "visualPrompt": zod.string(),
+  "visualSource": zod.enum(['pending', 'local-template', 'ai-provider']),
+  "visualProvider": zod.string().nullable(),
+  "visualAssetType": zod.union([zod.literal('image'),zod.literal('video'),zod.literal(null)]).nullable(),
   "durationSeconds": zod.number()
 })),
   "steps": zod.array(zod.object({
@@ -101,6 +105,10 @@ export const GetRenderStatusResponse = zod.object({
   "title": zod.string(),
   "narration": zod.string(),
   "visualCue": zod.string(),
+  "visualPrompt": zod.string(),
+  "visualSource": zod.enum(['pending', 'local-template', 'ai-provider']),
+  "visualProvider": zod.string().nullable(),
+  "visualAssetType": zod.union([zod.literal('image'),zod.literal('video'),zod.literal(null)]).nullable(),
   "durationSeconds": zod.number()
 })),
   "steps": zod.array(zod.object({

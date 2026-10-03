@@ -19,5 +19,7 @@ export * from './renderRequestMusic';
 export * from './renderRequestVisualStyle';
 export * from './renderRequestVoice';
 export * from './renderScene';
+export * from './renderSceneVisualAssetType';
+export * from './renderSceneVisualSource';
 export * from './renderStep';
 export * from './renderStepState';

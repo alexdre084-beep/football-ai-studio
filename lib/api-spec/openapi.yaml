@@ -137,9 +137,19 @@ components:
           type: string
         visualCue:
           type: string
+        visualPrompt:
+          type: string
+        visualSource:
+          type: string
+          enum: [pending, local-template, ai-provider]
+        visualProvider:
+          type: ["string", "null"]
+        visualAssetType:
+          type: ["string", "null"]
+          enum: [image, video, null]
         durationSeconds:
           type: number
-      required: [index, title, narration, visualCue, durationSeconds]
+      required: [index, title, narration, visualCue, visualPrompt, visualSource, visualProvider, visualAssetType, durationSeconds]
     RenderStep:
       type: object
       properties:

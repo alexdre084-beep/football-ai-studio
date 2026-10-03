@@ -119,6 +119,20 @@ function formatDate(value: string): string {
     : date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function visualSummary(project: Project): string {
+  const providerScenes = project.scenes.filter((scene) => scene.visualSource === "ai-provider");
+  if (providerScenes.length === 0) {
+    return `${project.scenes.length} local SVG template visuals`;
+  }
+  const providerNames = [...new Set(providerScenes.map((scene) => scene.visualProvider).filter(Boolean))];
+  const providerLabel = providerNames.join(", ") || "configured AI provider";
+  const providerPart = `${providerScenes.length} AI-provider visual${providerScenes.length === 1 ? "" : "s"} from ${providerLabel}`;
+  const fallbackCount = project.scenes.length - providerScenes.length;
+  return fallbackCount > 0
+    ? `${providerPart} and ${fallbackCount} local SVG fallback visual${fallbackCount === 1 ? "" : "s"}`
+    : providerPart;
+}
+
 function requestError(error: unknown): string {
   if (error instanceof Error) return error.message;
   return "The local render service could not be reached. Check that the API server is running and try again.";
@@ -307,13 +321,13 @@ function Home() {
           <>
             <div className="eyebrow">A local football video studio</div>
             <h1 className="page-heading">MAKE THE MOMENT<br />IMMORTAL.</h1>
-            <p className="page-intro">Describe the football moment you can’t stop thinking about. Build a scene script, original visuals, narration, soundtrack, and a real MP4 — right here.</p>
+            <p className="page-intro">Describe the football moment you can’t stop thinking about. Build a scene script and unique visual prompts, use a configured AI provider when available or the local fallback, then render narration, soundtrack, and a real MP4.</p>
 
             <div className="stage-layout">
               <section className="panel composer" aria-labelledby="composer-heading">
                 <div className="panel-heading">
                   <h2 className="section-title" id="composer-heading">Create a football video</h2>
-                  <span className="step-tag">LOCAL RENDER / MP4</span>
+                  <span className="step-tag">LOCAL MP4 / PROVIDER-READY</span>
                 </div>
                 <div className="mode-grid" role="group" aria-label="Creation mode">
                   {modes.map(({ name, detail, icon: Icon }) => (
@@ -374,7 +388,7 @@ function Home() {
                     </select><ChevronDown size={14} /></div>
                   </div>
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <div className="field-label"><span>Visual style</span><span className="label-hint">Generated stadium scenes</span></div>
+                    <div className="field-label"><span>Visual style</span><span className="label-hint">Applied to each scene prompt</span></div>
                     <div className="style-grid" role="group" aria-label="Visual style">
                       {styles.map((item) => <button key={item} type="button" className={`style-option ${style === item ? "selected" : ""}`} onClick={() => setStyle(item)} aria-pressed={style === item} data-testid={`style-${item.toLowerCase()}`}><span>{item}</span></button>)}
                     </div>
@@ -384,12 +398,12 @@ function Home() {
                   <button className="generate-button" onClick={beginProject} disabled={prompt.trim().length < 3 || isGenerating || createRender.isPending} data-testid="button-generate-video">
                     {isGenerating ? <><LoaderCircle size={16} className="loading-spin" /> Rendering local MP4</> : <><Sparkles size={16} /> Generate Video <span aria-hidden="true">→</span></>}
                   </button>
-                  <div className="submit-note"><ShieldCheck size={14} /> Offline tools · no API keys or paid services</div>
+                  <div className="submit-note"><ShieldCheck size={14} /> AI provider optional · local visuals fallback</div>
                 </div>
                 <div className="local-tools-note" data-testid="text-local-render-stack">
-                  <strong>Local render stack</strong>
-                  <span>Generated SVG scenes · eSpeak NG narration · FFmpeg video and synthesized score</span>
-                  <small>Visuals and music are locally generated templates. Paid AI image/video providers can be connected separately later.</small>
+                  <strong>Visual provider routing</strong>
+                  <span>Detailed prompt per scene · provider image/video assets when configured · eSpeak NG narration · FFmpeg MP4</span>
+                  <small>Scenes are labeled AI-provider visuals only after valid media is returned. With no provider configured, the current SVG fallback keeps rendering available.</small>
                 </div>
                 {errorMessage && (
                   <div className="render-error" role="alert" data-testid="status-render-error">
@@ -456,7 +470,7 @@ function Home() {
                     <div className="empty-preview" data-testid="empty-video-preview">
                       <div className="empty-icon"><Film size={23} /></div>
                       <h2 className="empty-title">Your rendered match film starts here</h2>
-                      <p className="empty-copy">Create your script, generated scenes, offline narration and score, then export a playable MP4.</p>
+                      <p className="empty-copy">Create the script and scene prompts, then use provider visuals when configured or local SVG fallbacks before adding narration, score, and the playable MP4.</p>
                     </div>
                   )}
                   <div className="preview-footer"><span><span className="live-dot" /> FFmpeg MP4 PIPELINE</span><span>LOCAL RENDER MODE</span></div>
@@ -469,7 +483,7 @@ function Home() {
                       <span className="concept-note">{(activeProject.durationSeconds)} seconds · {(activeProject.script.length > 0 ? "local pipeline" : "script unavailable")}</span>
                     </div>
                     <h2 className="result-title">{activeProject.title}</h2>
-                    <p className="result-description">Rendered on this server with generated stadium illustrations, {activeProject.voice === "No narration" ? "no narrator" : "offline eSpeak NG narration"}, {activeProject.music === "No music" ? "no soundtrack" : "a synthesized soundtrack"}, and FFmpeg.</p>
+                    <p className="result-description">Rendered on this server with {visualSummary(activeProject)}, {activeProject.voice === "No narration" ? "no narrator" : "offline eSpeak NG narration"}, {activeProject.music === "No music" ? "no soundtrack" : "a synthesized soundtrack"}, and FFmpeg.</p>
                     <div className="result-metrics">
                       <div className="metric"><div className="metric-label">Format</div><div className="metric-value">{activeProject.mode}</div></div>
                       <div className="metric"><div className="metric-label">Runtime · Language</div><div className="metric-value">{activeProject.durationSeconds}s · {activeProject.language}</div></div>
@@ -485,7 +499,18 @@ function Home() {
                           return (
                             <li className="shot-row" key={scene.index}>
                               <span className="shot-time">{formatTime(start)}</span>
-                              <span><strong>{scene.title}</strong> — {scene.visualCue}</span>
+                              <div className="shot-copy">
+                                <span><strong>{scene.title}</strong> — {scene.visualCue}</span>
+                                <span className={`visual-source-badge ${scene.visualSource === "ai-provider" ? "provider-source" : "local-source"}`}>
+                                  {scene.visualSource === "ai-provider"
+                                    ? `AI provider · ${scene.visualProvider ?? "verified"}`
+                                    : "Local SVG fallback"}
+                                </span>
+                                <details className="scene-prompt-details">
+                                  <summary>Scene visual prompt</summary>
+                                  <pre>{scene.visualPrompt || scene.visualCue}</pre>
+                                </details>
+                              </div>
                             </li>
                           );
                         })}

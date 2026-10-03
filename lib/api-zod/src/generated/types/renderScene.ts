@@ -5,11 +5,19 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { RenderSceneVisualAssetType } from './renderSceneVisualAssetType';
+import type { RenderSceneVisualSource } from './renderSceneVisualSource';
 
 export interface RenderScene {
   index: number;
   title: string;
   narration: string;
   visualCue: string;
+  visualPrompt: string;
+  visualSource: RenderSceneVisualSource;
+  /** @nullable */
+  visualProvider: string | null;
+  /** @nullable */
+  visualAssetType: RenderSceneVisualAssetType;
   durationSeconds: number;
 }
