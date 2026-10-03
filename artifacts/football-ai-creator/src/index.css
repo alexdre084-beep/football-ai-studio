@@ -271,3 +271,69 @@
   .project-row > .secondary-button { grid-column:2;justify-self:start; }
   .projects-toolbar { gap:12px;align-items:flex-start;flex-direction:column; }
 }
+
+.local-tools-note {
+  display:grid; gap:5px; margin-top:16px; padding:12px 13px;
+  border:1px solid #26343a; border-radius:8px; background:rgba(10,17,22,.58);
+}
+.local-tools-note strong { color:#c5ed55; font:9px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; }
+.local-tools-note span { color:#b1bdc2; font-size:10px; line-height:1.55; }
+.local-tools-note small { color:#74828b; font-size:9px; line-height:1.5; }
+.render-error {
+  display:flex; align-items:flex-start; gap:10px; margin-top:14px; padding:12px;
+  border:1px solid rgba(244,109,101,.35); border-radius:8px; color:#ff9a92; background:rgba(88,27,31,.19);
+}
+.render-error > span { display:grid; gap:4px; }
+.render-error strong { font-size:11px; }
+.render-error small { color:#c68e8d; font-size:10px; line-height:1.5; overflow-wrap:anywhere; }
+.render-progress { min-height:320px; padding:24px 20px; background:#101720; }
+.render-progress-heading { display:flex; align-items:center; gap:13px; }
+.render-progress-heading .empty-title { margin:0 0 5px; max-width:360px; text-align:left; }
+.render-progress-heading .empty-copy { max-width:380px; text-align:left; }
+.render-progress-track { height:5px; overflow:hidden; margin:20px 0 7px; border-radius:5px; background:#28323c; }
+.render-progress-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,#a8d63d,#5cdbca); box-shadow:0 0 14px rgba(197,237,85,.3); transition:width .45s ease; }
+.render-progress-label { display:flex; justify-content:space-between; gap:10px; color:#82909b; font:9px 'DM Mono',monospace; }
+.render-progress-label strong { color:#c5ed55; }
+.render-steps { display:grid; gap:0; margin:18px 0 0; padding:0; list-style:none; }
+.render-step { display:flex; align-items:flex-start; gap:10px; min-height:39px; padding:7px 0; border-top:1px solid rgba(46,59,68,.58); }
+.render-step-icon { display:grid; width:19px; height:19px; flex:none; place-items:center; border:1px solid #34404a; border-radius:50%; color:#7a8791; }
+.render-step-copy { display:grid; gap:3px; min-width:0; }
+.render-step-copy strong { color:#aab5bb; font-size:10px; font-weight:700; }
+.render-step-copy small { color:#73808a; font-size:9px; line-height:1.4; overflow-wrap:anywhere; }
+.state-processing .render-step-icon { color:#c5ed55; border-color:#8ca541; }
+.state-processing .render-step-copy strong { color:#d9ee9a; }
+.state-complete .render-step-icon { color:#9dda84; border-color:#658d4c; }
+.state-skipped .render-step-icon { color:#98a5ab; border-style:dashed; }
+.state-failed .render-step-icon { color:#ff9186; border-color:#a04d48; }
+.step-pending-dot { width:5px; height:5px; border-radius:50%; background:#58636e; }
+.failed-dot { background:#eb7168; box-shadow:0 0 10px rgba(235,113,104,.45); }
+.rendered-player { overflow:hidden; background:#05080b; }
+.rendered-player video { display:block; width:100%; aspect-ratio:16/9; background:#05080b; object-fit:contain; }
+.player-caption { display:flex; justify-content:space-between; gap:10px; padding:12px 16px; color:#87949d; font:9px 'DM Mono',monospace; border-top:1px solid #252f39; }
+.player-caption span:first-child { display:flex; align-items:center; gap:6px; color:#cae87a; }
+.video-unavailable { min-height:286px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:25px; color:#c1c9cb; text-align:center; }
+.video-unavailable svg { color:#c5ed55; }
+.video-unavailable strong { max-width:350px; font-size:12px; }
+.video-unavailable span { max-width:330px; color:#82909a; font-size:10px; line-height:1.5; }
+.render-failure { min-height:286px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:26px 20px; background:#101720; text-align:center; }
+.render-failure .empty-copy { max-width:430px; overflow-wrap:anywhere; }
+.render-failure .render-steps { width:100%; text-align:left; }
+.failure-icon { color:#ff8d85; border-color:rgba(255,141,133,.3); background:rgba(104,38,39,.2); }
+.sample-badge { color:#d7f67c; }
+.download-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:0 12px; border:1px solid #a9cf50; border-radius:7px; color:#17200c; background:#c5ed55; font-size:10px; font-weight:900; text-decoration:none; transition:all .18s; }
+.download-button:hover { background:#d7f879; transform:translateY(-1px); }
+.script-details { margin-top:15px; border:1px solid #2d3942; border-radius:8px; background:rgba(10,16,22,.45); }
+.script-details summary { padding:11px 12px; color:#c7d5a1; cursor:pointer; font-size:10px; font-weight:800; }
+.generated-script { white-space:pre-wrap; margin:0; padding:0 12px 12px; color:#c2ccd0; font:10px/1.65 'DM Mono',monospace; }
+.script-details .shot-list { padding:0 12px 12px; }
+.project-thumb { display:grid; place-items:center; color:#c5ed55; }
+.project-row-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; }
+.project-row-actions .secondary-button { text-decoration:none; }
+
+@media(max-width:620px) {
+  .render-progress { padding:20px 15px; }
+  .player-caption { flex-direction:column; gap:6px; }
+  .result-actions { flex-wrap:wrap; }
+  .result-actions > * { flex:1 1 auto; }
+  .project-row-actions { grid-column:1 / -1; justify-content:flex-start; }
+}

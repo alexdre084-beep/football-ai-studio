@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: rendering
+    description: Local football video rendering
 paths:
   /healthz:
     get:
@@ -24,6 +26,71 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /renders:
+    post:
+      operationId: createRenderJob
+      tags: [rendering]
+      summary: Generate a football video locally
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenderRequest"
+      responses:
+        "202":
+          description: Render job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJob"
+        "400":
+          description: Invalid render options
+        "429":
+          description: Local render capacity reached
+  /renders/{renderId}:
+    parameters:
+      - name: renderId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getRenderStatus
+      tags: [rendering]
+      summary: Read a render job and its pipeline progress
+      responses:
+        "200":
+          description: Current render state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJob"
+        "404":
+          description: Render job not found
+  /renders/{renderId}/video:
+    parameters:
+      - name: renderId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: downloadRenderVideo
+      tags: [rendering]
+      summary: Download the rendered MP4 file
+      responses:
+        "200":
+          description: Rendered MP4 video
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Rendered video not found
 components:
   schemas:
     HealthStatus:
@@ -33,4 +100,110 @@ components:
           type: string
       required:
         - status
+    RenderRequest:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: ["Football Story", "Match/Action Video"]
+        prompt:
+          type: string
+          minLength: 3
+          maxLength: 500
+        durationSeconds:
+          type: integer
+          enum: [15, 30, 45, 60]
+        language:
+          type: string
+          enum: [English, Spanish, French, German, Italian, Portuguese]
+        voice:
+          type: string
+          enum: ["Alex · Energetic", "Jordan · Cinematic", "Sam · Calm", "No narration"]
+        music:
+          type: string
+          enum: ["Stadium pulse", "Epic orchestral", "Electric tension", "Acoustic reflection", "No music"]
+        visualStyle:
+          type: string
+          enum: [Cinematic, Broadcast, Documentary, Anime]
+      required: [mode, prompt, durationSeconds, language, voice, music, visualStyle]
+    RenderScene:
+      type: object
+      properties:
+        index:
+          type: integer
+        title:
+          type: string
+        narration:
+          type: string
+        visualCue:
+          type: string
+        durationSeconds:
+          type: number
+      required: [index, title, narration, visualCue, durationSeconds]
+    RenderStep:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        state:
+          type: string
+          enum: [queued, processing, complete, skipped, failed]
+        detail:
+          type: string
+      required: [id, label, state, detail]
+    RenderJob:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, processing, complete, failed]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        stage:
+          type: string
+          enum: [script, visuals, narration, music, encoding, export, done, error]
+        message:
+          type: string
+        title:
+          type: string
+        prompt:
+          type: string
+        mode:
+          type: string
+          enum: ["Football Story", "Match/Action Video"]
+        script:
+          type: string
+        scenes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RenderScene"
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/RenderStep"
+        videoUrl:
+          type: ["string", "null"]
+        error:
+          type: ["string", "null"]
+        durationSeconds:
+          type: integer
+        language:
+          type: string
+        voice:
+          type: string
+        music:
+          type: string
+        visualStyle:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, status, progress, stage, message, title, prompt, mode, script, scenes, steps, videoUrl, error, durationSeconds, language, voice, music, visualStyle, createdAt]
 

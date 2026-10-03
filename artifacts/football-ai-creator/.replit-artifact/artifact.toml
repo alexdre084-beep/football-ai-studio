@@ -1,7 +1,7 @@
 kind = "web"
 previewPath = "/"
 title = "Football AI Creator"
-description = "A futuristic football video creation studio where fans can describe a story or match moment, choose narration and visual settings, and generate a sample video project."
+description = "Football video studio for turning a match idea into a real downloadable MP4 using locally generated scenes, offline narration, synthesized music, and FFmpeg."
 version = "1.0.0"
 id = "artifacts/football-ai-creator"
 router = "path"

@@ -1,1 +1,1 @@
-- [Video generation rollout](video-generation-rollout.md) — sample generation is phase one; real AI rendering is intended for a later phase.
+- [Video generation rollout](video-generation-rollout.md) — local MP4 rendering is the baseline; keep provider integrations separate and report success only after MP4 verification.
